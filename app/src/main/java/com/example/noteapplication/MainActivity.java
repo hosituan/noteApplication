@@ -15,6 +15,7 @@ import com.anychart.chart.common.dataentry.ValueDataEntry;
 import com.anychart.charts.Pie;
 import com.example.noteapplication.activity.LoginActivity;
 import com.example.noteapplication.activity.RegisterActivity;
+import com.example.noteapplication.bean.Status;
 import com.example.noteapplication.database.MyDatabaseHelper;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
@@ -30,6 +31,7 @@ import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -67,22 +69,29 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         anyChartView = findViewById(R.id.any_chart_view);
 
-        setupPieChart();
+        try {
+            setupPieChart();
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
     }
 
-    public void setupPieChart() {
-        int d = db.countDone();
-        int p = db.countProcessing();
-        int pe = db.countPending();
+    public void setupPieChart() throws ParseException {
+//        int d = db.countDone();
+//        int p = db.countProcessing();
+//        int pe = db.countPending();
         Pie pie = AnyChart.pie();
+        List<Status> statuses = db.getAllStatus();
         List<DataEntry> dataEntries = new ArrayList<>();
-/*        for(int i = 0; i < status.length; i++)
-        {
-            if(status[i] =="Done")
-        }*/
-        dataEntries.add(new ValueDataEntry("Done", d));
-        dataEntries.add(new ValueDataEntry("Processing", p));
-        dataEntries.add(new ValueDataEntry("Pending", pe));
+
+        for (int i=0; i < statuses.size(); i++) {
+            String title = statuses.get(i).getTitle();
+            int count = db.countStatus(title);
+            dataEntries.add(new ValueDataEntry(title, count));
+        }
+//        dataEntries.add(new ValueDataEntry("Done", d));
+//        dataEntries.add(new ValueDataEntry("Processing", p));
+//        dataEntries.add(new ValueDataEntry("Pending", pe));
 
         pie.data(dataEntries);
         pie.title("Dashboard");
@@ -96,7 +105,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             case R.id.nav_home: {
                 Intent intent = getIntent();
                 finish();
-                setupPieChart();
+                try {
+                    setupPieChart();
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                }
                 startActivity(intent);
                 break;
             }

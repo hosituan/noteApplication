@@ -194,6 +194,24 @@ public class MyDatabaseHelper extends SQLiteOpenHelper {
        return count;
    }
 
+    public int countStatus(String status){
+        int count = 0;
+        SQLiteDatabase db = this.getWritableDatabase();
+        //String selectQuery = "SELECT COUNT(*) FROM " + TABLE_NOTE + " WHERE " + COLUMN_NOTE_STATUS +" ='Done' ";
+        String selectQuery = "SELECT COUNT(*)FROM Note WHERE Status ='" + status +"'";
+        Cursor cursor = db.rawQuery(selectQuery, null);
+/*            if(cursor.moveToLast())
+            {
+                count=cursor.getInt(3);
+            }*/
+        if (cursor.moveToFirst()) {
+            do {
+                count=cursor.getInt(0);
+            } while (cursor.moveToNext());
+        }
+        return count;
+    }
+
     public int countProcessing(){
         int count = 0;
         SQLiteDatabase db = this.getWritableDatabase();
