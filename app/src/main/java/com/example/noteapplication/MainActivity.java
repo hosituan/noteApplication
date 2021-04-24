@@ -8,8 +8,14 @@ import android.view.View;
 import android.view.Menu;
 import android.widget.Toast;
 
+import com.anychart.AnyChart;
+import com.anychart.AnyChartView;
+import com.anychart.chart.common.dataentry.DataEntry;
+import com.anychart.chart.common.dataentry.ValueDataEntry;
+import com.anychart.charts.Pie;
 import com.example.noteapplication.activity.LoginActivity;
 import com.example.noteapplication.activity.RegisterActivity;
+import com.example.noteapplication.database.MyDatabaseHelper;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.navigation.NavigationView;
@@ -24,15 +30,22 @@ import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
     private AppBarConfiguration mAppBarConfiguration;
+    MyDatabaseHelper db = new MyDatabaseHelper(MainActivity.this);
+
+    AnyChartView anyChartView;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
@@ -49,6 +62,31 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         NavigationUI.setupActionBarWithNavController(this, navController, mAppBarConfiguration);
         NavigationUI.setupWithNavController(navigationView, navController);
         setNavigationViewListener();
+
+
+
+        anyChartView = findViewById(R.id.any_chart_view);
+
+        setupPieChart();
+    }
+
+    public void setupPieChart() {
+        int d = db.countDone();
+        int p = db.countProcessing();
+        int pe = db.countPending();
+        Pie pie = AnyChart.pie();
+        List<DataEntry> dataEntries = new ArrayList<>();
+/*        for(int i = 0; i < status.length; i++)
+        {
+            if(status[i] =="Done")
+        }*/
+        dataEntries.add(new ValueDataEntry("Done", d));
+        dataEntries.add(new ValueDataEntry("Processing", p));
+        dataEntries.add(new ValueDataEntry("Pending", pe));
+
+        pie.data(dataEntries);
+        pie.title("Dashboard");
+        anyChartView.setChart(pie);
     }
 
     @Override
@@ -56,7 +94,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         // Handle navigation view item clicks here.
         switch (item.getItemId()) {
             case R.id.nav_home: {
-
+                Intent intent = getIntent();
+                finish();
+                setupPieChart();
+                startActivity(intent);
                 break;
             }
             case R.id.nav_category: {

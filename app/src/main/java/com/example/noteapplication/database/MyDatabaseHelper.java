@@ -6,7 +6,6 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
-import android.view.View;
 
 import com.example.noteapplication.bean.Category;
 import com.example.noteapplication.bean.Note;
@@ -177,22 +176,59 @@ public class MyDatabaseHelper extends SQLiteOpenHelper {
         return noteList;
     }
 
-    public int getNotesCount() {
-        Log.i(TAG, "MyDatabaseHelper.getNotesCount ... " );
+   public int countDone(){
+        int count = 0;
+       SQLiteDatabase db = this.getWritableDatabase();
+       //String selectQuery = "SELECT COUNT(*) FROM " + TABLE_NOTE + " WHERE " + COLUMN_NOTE_STATUS +" ='Done' ";
+       String selectQuery = "SELECT COUNT(*)FROM Note WHERE Status ='" + "Done" +"'";
+       Cursor cursor = db.rawQuery(selectQuery, null);
+/*            if(cursor.moveToLast())
+            {
+                count=cursor.getInt(3);
+            }*/
+       if (cursor.moveToFirst()) {
+           do {
+               count=cursor.getInt(0);
+           } while (cursor.moveToNext());
+       }
+       return count;
+   }
 
-        String countQuery = "SELECT  * FROM " + TABLE_NOTE;
-        SQLiteDatabase db = this.getReadableDatabase();
-        Cursor cursor = db.rawQuery(countQuery, null);
-
-        int count = cursor.getCount();
-
-        cursor.close();
-
-        // return count
+    public int countProcessing(){
+        int count = 0;
+        SQLiteDatabase db = this.getWritableDatabase();
+        //String selectQuery = "SELECT COUNT(*) FROM " + TABLE_NOTE + " WHERE " + COLUMN_NOTE_STATUS +" ='Done' ";
+        String selectQuery = "SELECT COUNT(*)FROM Note WHERE Status ='" + "Processing" +"'";
+        Cursor cursor = db.rawQuery(selectQuery, null);
+/*            if(cursor.moveToLast())
+            {
+                count=cursor.getInt(3);
+            }*/
+        if (cursor.moveToFirst()) {
+            do {
+                count=cursor.getInt(0);
+            } while (cursor.moveToNext());
+        }
         return count;
     }
 
-
+    public int countPending(){
+        int count = 0;
+        SQLiteDatabase db = this.getWritableDatabase();
+        //String selectQuery = "SELECT COUNT(*) FROM " + TABLE_NOTE + " WHERE " + COLUMN_NOTE_STATUS +" ='Done' ";
+        String selectQuery = "SELECT COUNT(*)FROM Note WHERE Status ='" + "Pending" +"'";
+        Cursor cursor = db.rawQuery(selectQuery, null);
+/*            if(cursor.moveToLast())
+            {
+                count=cursor.getInt(3);
+            }*/
+        if (cursor.moveToFirst()) {
+            do {
+                count=cursor.getInt(0);
+            } while (cursor.moveToNext());
+        }
+        return count;
+    }
 //    public int updateNote(Note note) {
 //        Log.i(TAG, "MyDatabaseHelper.updateNote ... "  + note.getNoteTitle());
 //
@@ -330,4 +366,5 @@ public class MyDatabaseHelper extends SQLiteOpenHelper {
         // return note list
         return categoryList;
     }
+
 }
