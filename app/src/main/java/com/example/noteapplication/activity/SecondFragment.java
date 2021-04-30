@@ -12,7 +12,7 @@ import androidx.navigation.fragment.NavHostFragment;
 import com.example.noteapplication.R;
 
 public class SecondFragment extends Fragment {
-
+    int a;
     @Override
     public View onCreateView(
             LayoutInflater inflater, ViewGroup container,
