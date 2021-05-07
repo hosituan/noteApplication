@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 
+import com.crowdfire.cfalertdialog.CFAlertDialog;
 import com.example.noteapplication.MainActivity;
 import com.example.noteapplication.bean.User;
 import com.example.noteapplication.database.MyDatabaseHelper;
@@ -13,7 +14,9 @@ import com.google.android.material.snackbar.Snackbar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
+import android.text.TextUtils;
 import android.util.Log;
+import android.util.Patterns;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
@@ -59,6 +62,16 @@ public class LoginActivity extends AppCompatActivity {
             public void onClick(View v) {
                 MyDatabaseHelper db = new MyDatabaseHelper(LoginActivity.this);
                 User user = new User(email.getText().toString(), password.getText().toString());
+                if (!isValidEmail(email.getText().toString())) {
+                    CFAlertDialog.Builder builder = new CFAlertDialog.Builder(LoginActivity.this)
+                            .setDialogStyle(CFAlertDialog.CFAlertStyle.ALERT)
+                            .setTitle("Warning")
+                            .setMessage("Invalid email!")
+                            .addButton("OK, I understand, let me check.", -1, -1, CFAlertDialog.CFAlertActionStyle.POSITIVE, CFAlertDialog.CFAlertActionAlignment.JUSTIFIED, (dialog, which) -> {
+                                dialog.dismiss();
+                            });
+                    builder.show();
+                }
                 if (db.checkUser(user)) {
                     CheckBox remember = findViewById(R.id.checkbox_id_remember);
                     saveInfo(user, remember.isChecked());
@@ -66,7 +79,14 @@ public class LoginActivity extends AppCompatActivity {
                     LoginActivity.this.startActivity(dashboardIntent);
                 }
                 else {
-                    Toast.makeText(LoginActivity.this, "Wrong email or password!", Toast.LENGTH_LONG).show();
+                    CFAlertDialog.Builder builder = new CFAlertDialog.Builder(LoginActivity.this)
+                            .setDialogStyle(CFAlertDialog.CFAlertStyle.ALERT)
+                            .setTitle("Warning")
+                            .setMessage("Wrong email or password!")
+                            .addButton("OK, I understand, let me check.", -1, -1, CFAlertDialog.CFAlertActionStyle.POSITIVE, CFAlertDialog.CFAlertActionAlignment.JUSTIFIED, (dialog, which) -> {
+                                dialog.dismiss();
+                            });
+                    builder.show();
                 }
             }
         });
@@ -83,5 +103,9 @@ public class LoginActivity extends AppCompatActivity {
         SharedPreferences sharedPref = getSharedPreferences(PREFS_NAME, MODE_PRIVATE);
         boolean isRemember = sharedPref.getBoolean("isRemember", false);
         return  isRemember;
+    }
+
+    public static boolean isValidEmail(CharSequence target) {
+        return (!TextUtils.isEmpty(target) && Patterns.EMAIL_ADDRESS.matcher(target).matches());
     }
 }

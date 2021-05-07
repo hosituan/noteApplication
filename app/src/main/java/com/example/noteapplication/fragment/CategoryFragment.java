@@ -124,9 +124,9 @@ public class CategoryFragment extends Fragment {
                         .addButton("Delete", -1, -1, CFAlertDialog.CFAlertActionStyle.NEGATIVE, CFAlertDialog.CFAlertActionAlignment.JUSTIFIED, (dialog, which) -> {
                             dialog.dismiss();
                             if(db.deleteCategory(category)) {
-                                LoadList(view);
                                 Toast.makeText(getContext(), "Deleted", Toast.LENGTH_LONG).show();
                             }
+                            LoadList(view);
                         })
                         .addButton("CANCEL", -1, -1, CFAlertDialog.CFAlertActionStyle.DEFAULT, CFAlertDialog.CFAlertActionAlignment.JUSTIFIED, (dialog, which) -> {
                             dialog.dismiss();

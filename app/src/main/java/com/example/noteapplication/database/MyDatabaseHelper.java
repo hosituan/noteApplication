@@ -252,7 +252,7 @@ public class MyDatabaseHelper extends SQLiteOpenHelper {
         boolean result_note = db.delete(TABLE_NOTE, COLUMN_NOTE_CATEGORY + " = ?",
                 new String[] { String.valueOf(category.getTitle())}) > 0;
         db.close();
-        return  result && result_note;
+        return  result;
     }
 
     public boolean updateCategory(Category category) {
@@ -311,7 +311,7 @@ public class MyDatabaseHelper extends SQLiteOpenHelper {
         boolean result_note = db.delete(TABLE_NOTE, COLUMN_NOTE_PRIORITY + " = ?",
                 new String[] { String.valueOf(priority.getTitle())}) > 0;
         db.close();
-        return  result && result_note;
+        return  result;
     }
 
     public boolean updatePriority(Priority priority) {
@@ -369,7 +369,7 @@ public class MyDatabaseHelper extends SQLiteOpenHelper {
         boolean result_note = db.delete(TABLE_NOTE, COLUMN_NOTE_STATUS + " = ?",
                 new String[] { String.valueOf(status.getTitle())}) > 0;
         db.close();
-        return  result  && result_note;
+        return  result;
     }
 
     public boolean updateStatus(Status status) {
