@@ -6,7 +6,6 @@
     android:layout_height="match_parent"
     tools:context=".activity.LoginActivity">
 
-    <include layout="@layout/content_login" />
 
     <EditText
         android:id="@+id/title_id"

@@ -42,6 +42,7 @@ public class MyDatabaseHelper extends SQLiteOpenHelper {
     private static final String TABLE_USER = "User";
     private static final String COLUMN_USER_EMAIL = "Email";
     private static final String COLUMN_USER_PASSWORD = "Password";
+    private static final String COLUMN_USER_NAME = "Name";
 
     private static final String TABLE_CATEGORY = "Category";
     private static final String COLUMN_CATEGORY_TITLE = "Title";
@@ -59,6 +60,7 @@ public class MyDatabaseHelper extends SQLiteOpenHelper {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
     }
 
+    SQLiteDatabase db;
     // Create table
     @Override
     public void onCreate(SQLiteDatabase db) {
@@ -71,7 +73,7 @@ public class MyDatabaseHelper extends SQLiteOpenHelper {
         db.execSQL(script_note);
 
         String script_user = "CREATE TABLE " + TABLE_USER + "("
-                + COLUMN_USER_EMAIL + " TEXT PRIMARY KEY," + COLUMN_USER_PASSWORD + " TEXT)";
+                + COLUMN_USER_EMAIL + " TEXT PRIMARY KEY," + COLUMN_USER_PASSWORD + " TEXT, "+ COLUMN_USER_NAME + " TEXT)";
         // Execute Script.
         db.execSQL(script_user);
 
@@ -92,7 +94,6 @@ public class MyDatabaseHelper extends SQLiteOpenHelper {
 
     }
 
-
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
 
@@ -104,11 +105,13 @@ public class MyDatabaseHelper extends SQLiteOpenHelper {
     }
 
 
+    // Note --
+
+
+
     public void addNote(Note note) {
+        this.db = getWritableDatabase();
         Log.i(TAG, "MyDatabaseHelper.addNote ... " + note.getNoteTitle());
-
-        SQLiteDatabase db = this.getWritableDatabase();
-
         ContentValues values = new ContentValues();
         values.put(COLUMN_NOTE_TITLE, note.getNoteTitle());
         values.put(COLUMN_NOTE_CATEGORY, note.getCategory());
@@ -123,42 +126,33 @@ public class MyDatabaseHelper extends SQLiteOpenHelper {
         db.close();
     }
 
-    public  void addUser(User user) {
-        SQLiteDatabase db = this.getWritableDatabase();
-        ContentValues values = new ContentValues();
-        values.put(COLUMN_USER_EMAIL, user.getEmail());
-        values.put(COLUMN_USER_PASSWORD, user.getPassword());
-        db.insert(TABLE_USER, null, values);
-        Log.i(TAG, "Added user");
+    public boolean deleteNote(Note note) {
+        this.db = getWritableDatabase();
+        Log.i(TAG, "MyDatabaseHelper.updateNote ... " + note.getNoteTitle() );
+        boolean result = db.delete(TABLE_NOTE, COLUMN_NOTE_DATE + " = ?",
+                new String[] { String.valueOf(note.getDate()) }) > 0;
         db.close();
+        return  result;
     }
 
-
-    public Boolean checkUser(User user) {
-        String checkQuery = "SELECT  * FROM " + TABLE_USER + " WHERE " + COLUMN_USER_EMAIL + "='" + user.getEmail() + "' AND " + COLUMN_USER_PASSWORD + "='" + user.getPassword() + "'";
-        SQLiteDatabase db = this.getWritableDatabase();
-        Cursor cursor = db.rawQuery(checkQuery, null);
-
-
-        Log.i(TAG, "MyDatabaseHelper.getNote ... " + cursor.getCount());
-        if (cursor.getCount() == 1) {
-            return  true;
-        }
-        return  false;
+    public boolean updateNote(Note note) {
+        this.db = getWritableDatabase();
+        ContentValues values = new ContentValues();
+        values.put(COLUMN_NOTE_TITLE, note.getNoteTitle());
+        values.put(COLUMN_NOTE_CATEGORY, note.getCategory());
+        values.put(COLUMN_NOTE_PRIORITY, note.getPriority());
+        values.put(COLUMN_NOTE_STATUS, note.getStatus());
+        boolean result = db.update(TABLE_NOTE, values,COLUMN_NOTE_DATE + " = ?",
+                new String[] { String.valueOf(note.getDate()) }) > 0;
+        db.close();
+        return  result;
     }
-
-
-
-
 
     public List<Note> getAllNotes() throws ParseException {
-
-
+        this.db = getWritableDatabase();
         List<Note> noteList = new ArrayList<Note>();
         // Select All Query
         String selectQuery = "SELECT  * FROM " + TABLE_NOTE;
-
-        SQLiteDatabase db = this.getWritableDatabase();
         Cursor cursor = db.rawQuery(selectQuery, null);
 
         // looping through all rows and adding to list
@@ -176,107 +170,73 @@ public class MyDatabaseHelper extends SQLiteOpenHelper {
         return noteList;
     }
 
-   public int countDone(){
-        int count = 0;
-       SQLiteDatabase db = this.getWritableDatabase();
-       //String selectQuery = "SELECT COUNT(*) FROM " + TABLE_NOTE + " WHERE " + COLUMN_NOTE_STATUS +" ='Done' ";
-       String selectQuery = "SELECT COUNT(*)FROM Note WHERE Status ='" + "Done" +"'";
-       Cursor cursor = db.rawQuery(selectQuery, null);
-/*            if(cursor.moveToLast())
-            {
-                count=cursor.getInt(3);
-            }*/
-       if (cursor.moveToFirst()) {
-           do {
-               count=cursor.getInt(0);
-           } while (cursor.moveToNext());
-       }
-       return count;
-   }
+    // User --
 
-    public int countStatus(String status){
-        int count = 0;
-        SQLiteDatabase db = this.getWritableDatabase();
-        //String selectQuery = "SELECT COUNT(*) FROM " + TABLE_NOTE + " WHERE " + COLUMN_NOTE_STATUS +" ='Done' ";
-        String selectQuery = "SELECT COUNT(*)FROM Note WHERE Status ='" + status +"'";
-        Cursor cursor = db.rawQuery(selectQuery, null);
-/*            if(cursor.moveToLast())
-            {
-                count=cursor.getInt(3);
-            }*/
-        if (cursor.moveToFirst()) {
-            do {
-                count=cursor.getInt(0);
-            } while (cursor.moveToNext());
-        }
-        return count;
-    }
-
-    public int countProcessing(){
-        int count = 0;
-        SQLiteDatabase db = this.getWritableDatabase();
-        //String selectQuery = "SELECT COUNT(*) FROM " + TABLE_NOTE + " WHERE " + COLUMN_NOTE_STATUS +" ='Done' ";
-        String selectQuery = "SELECT COUNT(*)FROM Note WHERE Status ='" + "Processing" +"'";
-        Cursor cursor = db.rawQuery(selectQuery, null);
-/*            if(cursor.moveToLast())
-            {
-                count=cursor.getInt(3);
-            }*/
-        if (cursor.moveToFirst()) {
-            do {
-                count=cursor.getInt(0);
-            } while (cursor.moveToNext());
-        }
-        return count;
-    }
-
-    public int countPending(){
-        int count = 0;
-        SQLiteDatabase db = this.getWritableDatabase();
-        //String selectQuery = "SELECT COUNT(*) FROM " + TABLE_NOTE + " WHERE " + COLUMN_NOTE_STATUS +" ='Done' ";
-        String selectQuery = "SELECT COUNT(*)FROM Note WHERE Status ='" + "Pending" +"'";
-        Cursor cursor = db.rawQuery(selectQuery, null);
-/*            if(cursor.moveToLast())
-            {
-                count=cursor.getInt(3);
-            }*/
-        if (cursor.moveToFirst()) {
-            do {
-                count=cursor.getInt(0);
-            } while (cursor.moveToNext());
-        }
-        return count;
-    }
-//    public int updateNote(Note note) {
-//        Log.i(TAG, "MyDatabaseHelper.updateNote ... "  + note.getNoteTitle());
-//
-//        SQLiteDatabase db = this.getWritableDatabase();
-//
-//        ContentValues values = new ContentValues();
-//        values.put(COLUMN_NOTE_TITLE, note.getNoteTitle());
-//        values.put(COLUMN_NOTE_CONTENT, note.getNoteContent());
-//
-//        // updating row
-//        return db.update(TABLE_NOTE, values, COLUMN_NOTE_ID + " = ?",
-//                new String[]{String.valueOf(note.getNoteId())});
-//    }
-
-    public void deleteNote(Note note) {
-        Log.i(TAG, "MyDatabaseHelper.updateNote ... " + note.getNoteTitle() );
-
-        SQLiteDatabase db = this.getWritableDatabase();
-        db.delete(TABLE_NOTE, COLUMN_NOTE_DATE + " = ?",
-                new String[] { String.valueOf(note.getDate()) });
+    public  void addUser(User user) {
+        this.db = getWritableDatabase();
+        ContentValues values = new ContentValues();
+        values.put(COLUMN_USER_EMAIL, user.getEmail());
+        values.put(COLUMN_USER_PASSWORD, user.getPassword());
+        db.insert(TABLE_USER, null, values);
+        Log.i(TAG, "Added user");
         db.close();
     }
+
+
+    public Boolean checkUser(User user) {
+        this.db = getWritableDatabase();
+        String checkQuery = "SELECT  * FROM " + TABLE_USER + " WHERE " + COLUMN_USER_EMAIL + "='" + user.getEmail() + "' AND " + COLUMN_USER_PASSWORD + "='" + user.getPassword() + "'";
+        Cursor cursor = db.rawQuery(checkQuery, null);
+
+        Log.i(TAG, "MyDatabaseHelper.getNote ... " + cursor.getCount());
+        if (cursor.getCount() == 1) {
+            return  true;
+        }
+        return  false;
+    }
+
+    public boolean changePassword(User user) {
+        this.db = getWritableDatabase();
+        ContentValues values = new ContentValues();
+        values.put(COLUMN_USER_PASSWORD, user.getPassword());
+        boolean result = db.update(TABLE_USER, values,  COLUMN_USER_EMAIL +"='" + user.getEmail() + "'", null) > 0;
+        db.close();
+        return  result;
+    }
+
+
+    public User getUser(String email) {
+        this.db = getWritableDatabase();
+        String checkQuery = "SELECT  * FROM " + TABLE_USER + " WHERE " + COLUMN_USER_EMAIL + "='" + email +"'";
+        Cursor cursor = db.rawQuery(checkQuery, null);
+
+        Log.i(TAG, "MyDatabaseHelper.getNote ... " + cursor.getCount());
+        if (cursor.moveToFirst()) {
+            String password = cursor.getString(1);
+            String name = cursor.getString(2);
+            return new User(email, password, name);
+        }
+        return  null;
+    }
+
+    public  boolean changeName(User user) {
+        this.db = getWritableDatabase();
+        ContentValues values = new ContentValues();
+        values.put(COLUMN_USER_NAME, user.getName());
+        boolean result = db.update(TABLE_USER, values,  COLUMN_USER_EMAIL +"= '" + user.getEmail() + "'", null) > 0;
+        db.close();
+        return  result;
+    }
+
+
+
 
 
     //  -- Category
 
     public  void addCategory(Category category) {
-        SQLiteDatabase db = this.getWritableDatabase();
+        this.db = getWritableDatabase();
         ContentValues values = new ContentValues();
-
         values.put(COLUMN_CATEGORY_TITLE, category.getTitle());
         values.put(COLUMN_CATEGORY_DATE, category.getDate().toString());
         db.insert(TABLE_CATEGORY, null, values);
@@ -284,14 +244,35 @@ public class MyDatabaseHelper extends SQLiteOpenHelper {
         db.close();
     }
 
+    public boolean deleteCategory(Category category) {
+        this.db = getWritableDatabase();
+        Log.i(TAG, "MyDatabaseHelper.updateNote ... " +category.getTitle());
+        boolean result = db.delete(TABLE_CATEGORY, COLUMN_CATEGORY_TITLE + " = ?",
+                new String[] { String.valueOf(category.getTitle())}) > 0;
+        boolean result_note = db.delete(TABLE_NOTE, COLUMN_NOTE_CATEGORY + " = ?",
+                new String[] { String.valueOf(category.getTitle())}) > 0;
+        db.close();
+        return  result && result_note;
+    }
+
+    public boolean updateCategory(Category category) {
+        this.db = getWritableDatabase();
+        ContentValues values = new ContentValues();
+        values.put(COLUMN_CATEGORY_TITLE, category.getTitle());
+        boolean result = db.update(TABLE_CATEGORY, values,COLUMN_CATEGORY_DATE + " = ?",
+                new String[] { String.valueOf(category.getDate()) }) > 0;
+        db.close();
+        Log.i(TAG, String.valueOf(category.getDate()));
+        return  result;
+    }
+
     public List<Category> getAllCategory() throws ParseException {
+        this.db = getWritableDatabase();
         Log.i(TAG, "MyDatabaseHelper.getAllNotes ... " );
 
         List<Category> categoryList = new ArrayList<Category>();
         // Select All Query
         String selectQuery = "SELECT  * FROM " + TABLE_CATEGORY;
-
-        SQLiteDatabase db = this.getWritableDatabase();
         Cursor cursor = db.rawQuery(selectQuery, null);
 
         // looping through all rows and adding to list
@@ -312,7 +293,7 @@ public class MyDatabaseHelper extends SQLiteOpenHelper {
 
     // -- Priority
     public  void addPriority(Priority priority) {
-        SQLiteDatabase db = this.getWritableDatabase();
+        this.db = getWritableDatabase();
         ContentValues values = new ContentValues();
 
         values.put(COLUMN_CATEGORY_TITLE, priority.getTitle());
@@ -322,14 +303,35 @@ public class MyDatabaseHelper extends SQLiteOpenHelper {
         db.close();
     }
 
+    public boolean deletePriority(Priority priority) {
+        this.db = getWritableDatabase();
+        Log.i(TAG, "MyDatabaseHelper.updateNote ... " +priority.getTitle());
+        boolean result = db.delete(TABLE_PRIORITY, COLUMN_PRIORITY_TITLE + " = ?",
+                new String[] { String.valueOf(priority.getTitle())}) > 0;
+        boolean result_note = db.delete(TABLE_NOTE, COLUMN_NOTE_PRIORITY + " = ?",
+                new String[] { String.valueOf(priority.getTitle())}) > 0;
+        db.close();
+        return  result && result_note;
+    }
+
+    public boolean updatePriority(Priority priority) {
+        this.db = getWritableDatabase();
+        ContentValues values = new ContentValues();
+        values.put(COLUMN_PRIORITY_TITLE, priority.getTitle());
+        boolean result = db.update(TABLE_PRIORITY, values,COLUMN_PRIORITY_DATE + " = ?",
+                new String[] { String.valueOf(priority.getDate()) }) > 0;
+        db.close();
+        return  result;
+    }
+
     public List<Priority> getAllPriority() throws ParseException {
+        this.db = getWritableDatabase();
         Log.i(TAG, "MyDatabaseHelper.getAllNotes ... " );
 
         List<Priority> categoryList = new ArrayList<Priority>();
         // Select All Query
         String selectQuery = "SELECT  * FROM " + TABLE_PRIORITY;
 
-        SQLiteDatabase db = this.getWritableDatabase();
         Cursor cursor = db.rawQuery(selectQuery, null);
 
         // looping through all rows and adding to list
@@ -350,9 +352,8 @@ public class MyDatabaseHelper extends SQLiteOpenHelper {
     // -- Status
 
     public  void addStatus(Status status) {
-        SQLiteDatabase db = this.getWritableDatabase();
+        this.db = getWritableDatabase();
         ContentValues values = new ContentValues();
-
         values.put(COLUMN_CATEGORY_TITLE, status.getTitle());
         values.put(COLUMN_CATEGORY_DATE, status.getDate().toString());
         db.insert(TABLE_STATUS, null, values);
@@ -360,15 +361,36 @@ public class MyDatabaseHelper extends SQLiteOpenHelper {
         db.close();
     }
 
-    public List<Status> getAllStatus() throws ParseException {
-        Log.i(TAG, "MyDatabaseHelper.getAllNotes ... " );
+    public boolean deleteStatus(Status status) {
+        this.db = getWritableDatabase();
+        Log.i(TAG, "MyDatabaseHelper.updateNote ... " +status.getTitle());
+        boolean result = db.delete(TABLE_STATUS, COLUMN_STATUS_TITLE + " = ?",
+                new String[] { String.valueOf(status.getTitle())}) > 0;
+        boolean result_note = db.delete(TABLE_NOTE, COLUMN_NOTE_STATUS + " = ?",
+                new String[] { String.valueOf(status.getTitle())}) > 0;
+        db.close();
+        return  result  && result_note;
+    }
 
+    public boolean updateStatus(Status status) {
+        this.db = getWritableDatabase();
+        ContentValues values = new ContentValues();
+        values.put(COLUMN_STATUS_TITLE, status.getTitle());
+        boolean result = db.update(TABLE_STATUS, values,COLUMN_STATUS_DATE + " = ?",
+                new String[] { String.valueOf(status.getDate()) }) > 0;
+        db.close();
+        return  result;
+    }
+
+    public List<Status> getAllStatus() throws ParseException { ;
+        this.db = getWritableDatabase();
         List<Status> categoryList = new ArrayList<Status>();
         // Select All Query
         String selectQuery = "SELECT  * FROM " + TABLE_STATUS;
 
-        SQLiteDatabase db = this.getWritableDatabase();
+        //SQLiteDatabase db = this.getWritableDatabase();
         Cursor cursor = db.rawQuery(selectQuery, null);
+
 
         // looping through all rows and adding to list
         if (cursor.moveToFirst()) {
@@ -383,6 +405,21 @@ public class MyDatabaseHelper extends SQLiteOpenHelper {
 
         // return note list
         return categoryList;
+    }
+
+
+    public int countStatus(String status){
+        int count = 0;
+        this.db = getWritableDatabase();
+        //String selectQuery = "SELECT COUNT(*) FROM " + TABLE_NOTE + " WHERE " + COLUMN_NOTE_STATUS +" ='Done' ";
+        String selectQuery = "SELECT COUNT(*)FROM Note WHERE Status ='" + status +"'";
+        Cursor cursor = db.rawQuery(selectQuery, null);
+        if (cursor.moveToFirst()) {
+            do {
+                count=cursor.getInt(0);
+            } while (cursor.moveToNext());
+        }
+        return count;
     }
 
 }

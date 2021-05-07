@@ -1,21 +1,20 @@
 package com.example.noteapplication;
 
-import android.app.Activity;
-import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.MenuItem;
-import android.view.View;
 import android.view.Menu;
-import android.widget.Toast;
+import android.view.View;
+import android.widget.TextView;
 
 import com.anychart.AnyChart;
 import com.anychart.AnyChartView;
 import com.anychart.chart.common.dataentry.DataEntry;
 import com.anychart.chart.common.dataentry.ValueDataEntry;
 import com.anychart.charts.Pie;
-import com.example.noteapplication.activity.LoginActivity;
-import com.example.noteapplication.activity.RegisterActivity;
+import com.crowdfire.cfalertdialog.CFAlertDialog;
 import com.example.noteapplication.bean.Status;
+import com.example.noteapplication.bean.User;
 import com.example.noteapplication.database.MyDatabaseHelper;
 import com.example.noteapplication.fragment.CategoryFragment;
 import com.example.noteapplication.fragment.ChangePasswordFragment;
@@ -24,8 +23,6 @@ import com.example.noteapplication.fragment.HomeFragment;
 import com.example.noteapplication.fragment.NoteFragment;
 import com.example.noteapplication.fragment.PriorityFragment;
 import com.example.noteapplication.fragment.StatusFragment;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.navigation.NavigationView;
 
 import androidx.annotation.NonNull;
@@ -47,20 +44,19 @@ import java.util.List;
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
     private AppBarConfiguration mAppBarConfiguration;
+    private static final String PREFS_NAME = "USER_INFO";
+
     MyDatabaseHelper db = new MyDatabaseHelper(MainActivity.this);
-
-    AnyChartView anyChartView;
-
     //Change Fragment
-    private static final int fragment_home2 = 1;
+    private static final int fragment_home = 1;
     private static final int fragment_category = 2;
     private static final int fragment_priority = 3;
     private static final int fragment_status = 4;
     private static final int fragment_note = 5;
-    private static final int fragment_editprofile = 6;
-    private static final int fragment_changepassword = 7;
+    private static final int fragment_editProfile = 6;
+    private static final int fragment_changePassword = 7;
 
-    private int currentFragment = fragment_home2;
+    private int currentFragment = fragment_home;
     //Change Fragment
 
 
@@ -72,6 +68,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
+
 
         NavigationView navigationView = findViewById(R.id.nav_view);
         // Passing each menu ID as a set of Ids because each
@@ -86,120 +83,94 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         NavigationUI.setupWithNavController(navigationView, navController);
         setNavigationViewListener();
 
+
+        View headerView = navigationView.getHeaderView(0);
+
+        TextView nameLabel = headerView.findViewById(R.id.name);
+        TextView emailLabel =  headerView.findViewById(R.id.email);
+        String email = getInfo();
+        User user = db.getUser(email);
+        nameLabel.setText(user.getName());
+        emailLabel.setText(email);
+
         //Change Fragment
         navigationView.setNavigationItemSelectedListener(this::onNavigationItemSelected);
         replaceFragment(new HomeFragment());
-        //Change Fragment
 
-
-
-        anyChartView = findViewById(R.id.any_chart_view);
-
-        try {
-            setupPieChart();
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
     }
 
-    public void setupPieChart() throws ParseException {
-//        int d = db.countDone();
-//        int p = db.countProcessing();
-//        int pe = db.countPending();
-        Pie pie = AnyChart.pie();
-        List<Status> statuses = db.getAllStatus();
-        List<DataEntry> dataEntries = new ArrayList<>();
-
-        for (int i=0; i < statuses.size(); i++) {
-            String title = statuses.get(i).getTitle();
-            int count = db.countStatus(title);
-            dataEntries.add(new ValueDataEntry(title, count));
-        }
-//        dataEntries.add(new ValueDataEntry("Done", d));
-//        dataEntries.add(new ValueDataEntry("Processing", p));
-//        dataEntries.add(new ValueDataEntry("Pending", pe));
-
-        pie.data(dataEntries);
-        pie.title("Dashboard");
-        anyChartView.setChart(pie);
+    public String getInfo() {
+        SharedPreferences sharedPref = getSharedPreferences(PREFS_NAME, MODE_PRIVATE);
+        String email = sharedPref.getString("email", "");
+        return  email;
     }
+
+
 
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-        // Handle navigation view item clicks here.
-        /*switch (item.getItemId()) {
-            case R.id.nav_home: {
-                Intent intent = getIntent();
-                finish();
-                try {
-                    setupPieChart();
-                } catch (ParseException e) {
-                    e.printStackTrace();
-                }
-                startActivity(intent);
-                break;
-            }
-            case R.id.nav_category: {
-                Intent categoryIntent = new Intent(MainActivity.this, CategoryActivity.class);
-                MainActivity.this.startActivity(categoryIntent);
-                break;
-            }
-            case R.id.nav_priority: {
-                Intent priorityIntent = new Intent(MainActivity.this, PriorityActivity.class);
-                MainActivity.this.startActivity(priorityIntent);
-                break;
-            }
-            case R.id.nav_status: {
-                Intent  statusIntent = new Intent(MainActivity.this, StatusActivity.class);
-                MainActivity.this.startActivity(statusIntent);
-                break;
-            }
-            case R.id.nav_note: {
-                Intent noteIntent = new Intent(MainActivity.this, NoteActivity.class);
-                MainActivity.this.startActivity(noteIntent);
-                break;
-            }
-        }
-        return true;*/
 
         //Change Fragment
         int id = item.getItemId();
 
         if (id == R.id.nav_home) {
-            if (fragment_home2 != currentFragment) {
+            if (fragment_home != currentFragment) {
                 replaceFragment(new HomeFragment());
-                currentFragment = fragment_home2;
+                getSupportActionBar().setTitle("Home");
+                currentFragment = fragment_home;
             }
         } else if (id == R.id.nav_category) {
             if (fragment_category != currentFragment) {
                 replaceFragment(new CategoryFragment());
+                getSupportActionBar().setTitle("Category");
                 currentFragment = fragment_category;
             }
         } else if (id == R.id.nav_priority) {
             if (fragment_priority != currentFragment) {
                 replaceFragment(new PriorityFragment());
+                getSupportActionBar().setTitle("Priority");
                 currentFragment = fragment_priority;
             }
         } else if (id == R.id.nav_status) {
             if (fragment_status != currentFragment) {
                 replaceFragment(new StatusFragment());
+                getSupportActionBar().setTitle("Status");
                 currentFragment = fragment_status;
             }
         } else if (id == R.id.nav_note) {
             if (fragment_note != currentFragment) {
                 replaceFragment(new NoteFragment());
+                getSupportActionBar().setTitle("Notes");
                 currentFragment = fragment_note;
             }
         } else if (id == R.id.nav_editprofile) {
-            if (fragment_editprofile != currentFragment) {
+            if (fragment_editProfile != currentFragment) {
                 replaceFragment(new EditProfileFragment());
-                currentFragment = fragment_editprofile;
+                getSupportActionBar().setTitle("Edit Profile");
+                currentFragment = fragment_editProfile;
             }
         } else if (id == R.id.nav_changepassword) {
-            if (fragment_changepassword != currentFragment) {
+            if (fragment_changePassword != currentFragment) {
                 replaceFragment(new ChangePasswordFragment());
-                currentFragment = fragment_changepassword;
+                getSupportActionBar().setTitle("Change password");
+                currentFragment = fragment_changePassword;
             }
+        } else if (id == R.id.logout) {
+            CFAlertDialog.Builder builder = new CFAlertDialog.Builder(MainActivity.this)
+                    .setDialogStyle(CFAlertDialog.CFAlertStyle.BOTTOM_SHEET)
+                    .setTitle("Are you sure?")
+                    .setMessage("Logout and clear your local information?")
+                    .addButton("YES", -1, -1, CFAlertDialog.CFAlertActionStyle.NEGATIVE, CFAlertDialog.CFAlertActionAlignment.JUSTIFIED, (dialog, which) -> {
+                        SharedPreferences settings = (SharedPreferences) getSharedPreferences(PREFS_NAME, MODE_PRIVATE);
+                        settings.edit().clear().commit();
+                        dialog.dismiss();
+                        finish();
+                    })
+                    .addButton("CANCEL", -1, -1, CFAlertDialog.CFAlertActionStyle.DEFAULT, CFAlertDialog.CFAlertActionAlignment.JUSTIFIED, (dialog, which) -> {
+                        dialog.dismiss();
+                    });
+
+            builder.show();
         }
 
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
@@ -233,5 +204,4 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         fragmentTransaction.replace(R.id.content_frame,fragment);
         fragmentTransaction.commit();
     }
-    //Change Fragment
 }

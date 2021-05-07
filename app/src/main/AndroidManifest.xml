@@ -9,22 +9,10 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.NoteApplication">
-        <activity android:name=".NoteActivity"
-            android:label="All notes"
-            />
-        <activity android:name=".StatusActivity"
-            android:label="Status"
-            />
-        <activity android:name=".PriorityActivity"
-            android:label="Priority"
-            />
-        <activity android:name=".CategoryActivity"
-            android:label="Category"
-            />
         <activity android:name=".activity.RegisterActivity" />
         <activity
             android:name=".activity.LoginActivity"
-            android:label="@string/title_activity_login"
+            android:label="@string/app_name"
             android:theme="@style/Theme.NoteApplication.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -32,6 +20,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
         <activity
             android:name=".MainActivity"
             android:label="@string/app_name"
