@@ -7,7 +7,7 @@
         <item
             android:id="@+id/nav_home"
             android:icon="@drawable/ic_menu_camera"
-            android:title="@string/menu_home" />
+            android:title="Home" />
         <item
             android:id="@+id/nav_category"
             android:icon="@drawable/ic_menu_gallery"
@@ -18,11 +18,24 @@
             android:title="Priority" />
         <item
             android:id="@+id/nav_status"
-            android:icon="@drawable/ic_menu_manage"
+            android:icon="@drawable/ic_baseline_build_24"
             android:title="Status" />
         <item
             android:id="@+id/nav_note"
-            android:icon="@drawable/ic_menu_manage"
+            android:icon="@drawable/ic_baseline_build_24"
             android:title="Note" />
     </group>
+
+    <item android:title="Account">
+        <menu>
+            <item
+                android:id="@+id/nav_editprofile"
+                android:icon="@drawable/ic_baseline_share_24"
+                android:title="Edit Profile" />
+            <item
+                android:id="@+id/nav_changepassword"
+                android:icon="@drawable/ic_baseline_send_24"
+                android:title="Change password" />
+        </menu>
+    </item>
 </menu>

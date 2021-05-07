@@ -7,19 +7,43 @@
 
     <fragment
         android:id="@+id/nav_home"
-        android:name="com.example.noteapplication.ui.home.HomeFragment"
+        android:name="com.example.noteapplication.fragment.HomeFragment"
         android:label="@string/menu_home"
         tools:layout="@layout/fragment_home" />
 
     <fragment
-        android:id="@+id/nav_gallery"
-        android:name="com.example.noteapplication.ui.gallery.GalleryFragment"
-        android:label="@string/menu_gallery"
-        tools:layout="@layout/fragment_gallery" />
+        android:id="@+id/nav_category"
+        android:name="com.example.noteapplication.fragment.CategoryFragment"
+        android:label="nav_category"
+        tools:layout="@layout/fragment_category" />
 
     <fragment
-        android:id="@+id/nav_slideshow"
-        android:name="com.example.noteapplication.ui.slideshow.SlideshowFragment"
-        android:label="@string/menu_slideshow"
-        tools:layout="@layout/fragment_slideshow" />
+        android:id="@+id/nav_priority"
+        android:name="com.example.noteapplication.fragment.PriorityFragment"
+        android:label="nav_priority"
+        tools:layout="@layout/fragment_priority" />
+
+    <fragment
+        android:id="@+id/nav_status"
+        android:name="com.example.noteapplication.fragment.StatusFragment"
+        android:label="nav_status"
+        tools:layout="@layout/fragment_status" />
+
+    <fragment
+        android:id="@+id/nav_note"
+        android:name="com.example.noteapplication.fragment.NoteFragment"
+        android:label="nav_note"
+        tools:layout="@layout/fragment_note" />
+
+    <fragment
+        android:id="@+id/nav_editprofile"
+        android:name="com.example.noteapplication.fragment.EditProfileFragment"
+        android:label="nav_edit_profile"
+        tools:layout="@layout/fragment_edit_profile" />
+
+    <fragment
+        android:id="@+id/nav_changepassword"
+        android:name="com.example.noteapplication.fragment.ChangePasswordFragment"
+        android:label="nav_change_password"
+        tools:layout="@layout/fragment_change_password" />
 </navigation>
