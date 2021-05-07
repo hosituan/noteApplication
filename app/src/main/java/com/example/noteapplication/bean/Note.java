@@ -4,11 +4,11 @@ import java.io.Serializable;
 import java.util.*;
 public class Note implements Serializable {
 
-    private String noteTitle;
-    private String category;
-    private String priority;
-    private String status;
-    private Date date;
+    private String noteTitle = "";
+    private String category = "";
+    private String priority = "";
+    private String status = "";
+    private Date date = new Date();
 
     public Note()  {
 

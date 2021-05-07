@@ -1,4 +1,4 @@
-package com.example.noteapplication;
+package com.example.noteapplication.fragment;
 
 import android.app.Activity;
 
@@ -6,8 +6,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
-import android.widget.ImageView;
 import android.widget.TextView;
+
+import com.example.noteapplication.R;
 
 class CommonListAdapter extends ArrayAdapter<String> {
 
@@ -51,7 +52,7 @@ class NoteListAdapter extends ArrayAdapter<String> {
     private final String[] date;
 
     public NoteListAdapter(Activity context, String[] title, String[] category, String[] priority, String[] status, String[]  date) {
-        super(context, R.layout.note_lsit, title);
+        super(context, R.layout.note_list, title);
         // TODO Auto-generated constructor stub
 
         this.context=context;
@@ -66,7 +67,7 @@ class NoteListAdapter extends ArrayAdapter<String> {
 
     public View getView(int position,View view,ViewGroup parent) {
         LayoutInflater inflater=context.getLayoutInflater();
-        View rowView=inflater.inflate(R.layout.note_lsit, null,true);
+        View rowView=inflater.inflate(R.layout.note_list, null,true);
 
         TextView titleText = (TextView) rowView.findViewById(R.id.title);
         TextView category_ = rowView.findViewById(R.id.category);
