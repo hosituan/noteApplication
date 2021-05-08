@@ -3,6 +3,7 @@ package com.example.noteapplication.fragment;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -24,6 +25,7 @@ import com.example.noteapplication.bean.Category;
 import com.example.noteapplication.bean.Note;
 import com.example.noteapplication.bean.Priority;
 import com.example.noteapplication.bean.Status;
+import com.example.noteapplication.bean.User;
 import com.example.noteapplication.database.MyDatabaseHelper;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
@@ -33,6 +35,7 @@ import java.util.List;
 
 public class NoteFragment extends Fragment {
     MyDatabaseHelper db;
+    private static final String PREFS_NAME = "USER_INFO" ;
     public NoteFragment() {
 
     }
@@ -50,8 +53,6 @@ public class NoteFragment extends Fragment {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
-
                 showAddNote(new Note(), fragmentView, true);
 
             }
@@ -118,10 +119,12 @@ public class NoteFragment extends Fragment {
                 String cate = category.getSelectedItem().toString();
                 String pri = priority.getSelectedItem().toString();
                 String sta = status.getSelectedItem().toString();
+                String email = getInfo();
                 note.setNoteTitle(title);
                 note.setCategory(cate);
                 note.setPriority(pri);
                 note.setStatus(sta);
+                note.setEmail(email);
                 if (isAdd) {
                     db.addNote(note);
                 }
@@ -155,17 +158,15 @@ public class NoteFragment extends Fragment {
 
         MyDatabaseHelper db = new MyDatabaseHelper(getContext());
         try {
-
-            notes = db.getAllNotes();
-            notes.forEach((v) ->
-                    {
-                        title.add(v.getNoteTitle());
-                        category.add(v.getCategory());
-                        priority.add(v.getPriority());
-                        status.add(v.getStatus());
-                        date.add(v.getDate().toString());
-                    }
-            );
+            String email = getInfo();
+            notes = db.getAllNotes(new User(email));
+            for (Note v : notes) {
+                title.add(v.getNoteTitle());
+                category.add(v.getCategory());
+                priority.add(v.getPriority());
+                status.add(v.getStatus());
+                date.add(v.getDate().toString());
+            }
         } catch (ParseException e) {
             e.printStackTrace();
         }
@@ -208,5 +209,11 @@ public class NoteFragment extends Fragment {
                 return true;
             }
         });
+    }
+
+    public String getInfo() {
+        SharedPreferences sharedPref = getActivity().getSharedPreferences(PREFS_NAME, getContext().MODE_PRIVATE);
+        String email = sharedPref.getString("email", "");
+        return  email;
     }
 }

@@ -7,6 +7,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
+import com.example.noteapplication.activity.LoginActivity;
 import com.example.noteapplication.bean.Category;
 import com.example.noteapplication.bean.Note;
 import com.example.noteapplication.bean.Priority;
@@ -38,6 +39,7 @@ public class MyDatabaseHelper extends SQLiteOpenHelper {
     private static final String COLUMN_NOTE_PRIORITY ="Priority";
     private static final String COLUMN_NOTE_STATUS ="Status";
     private static final String COLUMN_NOTE_DATE ="Date";
+    private static final String COLUMN_NOTE_EMAIL ="Email";
 
     private static final String TABLE_USER = "User";
     private static final String COLUMN_USER_EMAIL = "Email";
@@ -68,7 +70,7 @@ public class MyDatabaseHelper extends SQLiteOpenHelper {
         // Script.
         String script_note = "CREATE TABLE " + TABLE_NOTE + "("
                 + COLUMN_NOTE_TITLE + " TEXT PRIMARY KEY,"
-                +  COLUMN_NOTE_CATEGORY + " TEXT, " + COLUMN_NOTE_PRIORITY + " TEXT," + COLUMN_NOTE_STATUS + " TEXT," + COLUMN_NOTE_DATE + " TEXT)";
+                +  COLUMN_NOTE_CATEGORY + " TEXT, " + COLUMN_NOTE_PRIORITY + " TEXT," + COLUMN_NOTE_STATUS + " TEXT," + COLUMN_NOTE_DATE + " TEXT," + COLUMN_NOTE_EMAIL+" TEXT)";
         // Execute Script.
         db.execSQL(script_note);
 
@@ -111,14 +113,14 @@ public class MyDatabaseHelper extends SQLiteOpenHelper {
 
     public void addNote(Note note) {
         this.db = getWritableDatabase();
-        Log.i(TAG, "MyDatabaseHelper.addNote ... " + note.getNoteTitle());
+        Log.i(TAG, "MyDatabaseHelper.addNote ... " + note.getNoteTitle() + " FOR " + note.getEmail());
         ContentValues values = new ContentValues();
         values.put(COLUMN_NOTE_TITLE, note.getNoteTitle());
         values.put(COLUMN_NOTE_CATEGORY, note.getCategory());
         values.put(COLUMN_NOTE_PRIORITY, note.getPriority());
         values.put(COLUMN_NOTE_STATUS, note.getStatus());
         values.put(COLUMN_NOTE_DATE, note.getDate().toString());
-
+        values.put(COLUMN_NOTE_EMAIL, note.getEmail());
         // Inserting Row
         db.insert(TABLE_NOTE, null, values);
 
@@ -148,11 +150,12 @@ public class MyDatabaseHelper extends SQLiteOpenHelper {
         return  result;
     }
 
-    public List<Note> getAllNotes() throws ParseException {
+    public List<Note> getAllNotes(User user) throws ParseException {
         this.db = getWritableDatabase();
         List<Note> noteList = new ArrayList<Note>();
         // Select All Query
-        String selectQuery = "SELECT  * FROM " + TABLE_NOTE;
+        Log.w("TAG", user.getEmail());
+        String selectQuery = "SELECT  * FROM " + TABLE_NOTE +  " WHERE " + COLUMN_NOTE_EMAIL + "='" + user.getEmail() + "'";
         Cursor cursor = db.rawQuery(selectQuery, null);
 
         // looping through all rows and adding to list
@@ -160,7 +163,7 @@ public class MyDatabaseHelper extends SQLiteOpenHelper {
             do {
                 String dateStr = cursor.getString(4);
                 Date date = new SimpleDateFormat("EEE MMM dd HH:mm:ss zzz yyyy").parse(dateStr);
-                Note note = new Note(cursor.getString(0), cursor.getString(1), cursor.getString(2), cursor.getString(3), date);
+                Note note = new Note(cursor.getString(0), cursor.getString(1), cursor.getString(2), cursor.getString(3), date, cursor.getString(4));
                 // Adding note to list
                 noteList.add(note);
             } while (cursor.moveToNext());
@@ -408,11 +411,10 @@ public class MyDatabaseHelper extends SQLiteOpenHelper {
     }
 
 
-    public int countStatus(String status){
+    public int countStatus(String status, String email){
         int count = 0;
         this.db = getWritableDatabase();
-        //String selectQuery = "SELECT COUNT(*) FROM " + TABLE_NOTE + " WHERE " + COLUMN_NOTE_STATUS +" ='Done' ";
-        String selectQuery = "SELECT COUNT(*)FROM Note WHERE Status ='" + status +"'";
+        String selectQuery = "SELECT COUNT(*)FROM Note WHERE Status ='" + status +"'" + " AND " + COLUMN_NOTE_EMAIL + "='" + email  + "'";
         Cursor cursor = db.rawQuery(selectQuery, null);
         if (cursor.moveToFirst()) {
             do {

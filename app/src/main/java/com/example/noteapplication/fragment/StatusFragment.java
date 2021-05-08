@@ -53,7 +53,7 @@ public class StatusFragment extends Fragment {
 
     void showAddStatus(Status status, View fragmentView, boolean isAdd) {
         AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
-        builder.setTitle("Category Form");
+        builder.setTitle("Status Form");
         final EditText input = new EditText(getContext());
         input.setInputType(InputType.TYPE_CLASS_TEXT);
         input.setText(status.getTitle());
@@ -91,12 +91,10 @@ public class StatusFragment extends Fragment {
         MyDatabaseHelper db = new MyDatabaseHelper(getContext());
         try {
             categories = db.getAllStatus();
-            categories.forEach((v) ->
-                    {
-                        mainTitle.add(v.getTitle());
-                        subTitle.add(v.getDate().toString());
-                    }
-            );
+            for (Status v : categories) {
+                mainTitle.add(v.getTitle());
+                subTitle.add(v.getDate().toString());
+            }
         } catch (ParseException e) {
             e.printStackTrace();
         }

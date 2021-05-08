@@ -1,5 +1,6 @@
 package com.example.noteapplication.fragment;
 
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -23,6 +24,7 @@ import java.util.List;
 public class HomeFragment extends Fragment {
     AnyChartView anyChartView;
     MyDatabaseHelper db;
+    private static final String PREFS_NAME = "USER_INFO" ;
     public HomeFragment() {
 
     }
@@ -33,7 +35,8 @@ public class HomeFragment extends Fragment {
 
         for (int i=0; i < statuses.size(); i++) {
             String title = statuses.get(i).getTitle();
-            int count = db.countStatus(title);
+            String email = getInfo();
+            int count = db.countStatus(title, email);
             dataEntries.add(new ValueDataEntry(title, count));
         }
 
@@ -56,5 +59,11 @@ public class HomeFragment extends Fragment {
 
         return fragmentView;
 
+    }
+
+    public String getInfo() {
+        SharedPreferences sharedPref = getActivity().getSharedPreferences(PREFS_NAME, getContext().MODE_PRIVATE);
+        String email = sharedPref.getString("email", "");
+        return  email;
     }
 }

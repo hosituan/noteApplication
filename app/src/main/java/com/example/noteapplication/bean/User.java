@@ -2,8 +2,8 @@ package com.example.noteapplication.bean;
 import java.io.Serializable;
 
 public class User implements Serializable {
-    private String email;
-    private String passWord;
+    private String email = "";
+    private String passWord = "";
     private String name = "";
 
     public User(String email, String passWord) {
@@ -16,6 +16,12 @@ public class User implements Serializable {
         this.passWord = passWord;
         this.name = name;
     }
+
+    public User(String email) {
+        this.email = email;
+    }
+
+
 
     public String getEmail() {
         return this.email;

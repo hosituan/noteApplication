@@ -9,17 +9,20 @@ public class Note implements Serializable {
     private String priority = "";
     private String status = "";
     private Date date = new Date();
+    private String email = "";
 
     public Note()  {
 
     }
 
-    public Note(String noteTitle, String category, String priority, String status, Date date) {
+
+    public Note(String noteTitle, String category, String priority, String status, Date date, String email) {
         this.noteTitle= noteTitle;
         this.category = category;
         this.priority = priority;
         this.status = status;
         this.date = date;
+        this.email = email;
     }
 
     public String getNoteTitle() {
@@ -60,4 +63,8 @@ public class Note implements Serializable {
         this.date = date;
     }
 
+    public String getEmail() { return this.email;}
+    public void setEmail(String email) {
+        this.email = email;
+    }
 }

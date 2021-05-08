@@ -55,6 +55,7 @@ public class CategoryFragment extends Fragment {
         return fragmentView;
     }
 
+    // Show category dialog, for adding and editing
     void showAddCategory(Category category, View fragmentView, boolean isAdd) {
         AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
         builder.setTitle("Category Form");
@@ -86,6 +87,8 @@ public class CategoryFragment extends Fragment {
         builder.show();
     }
 
+
+    // Load data and adapt to List View
     void LoadList(View view) {
         List<String> mainTitle = new ArrayList<String>();
         List<String> subTitle = new ArrayList<String>();

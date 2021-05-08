@@ -51,7 +51,7 @@ public class PriorityFragment extends Fragment {
 
     void showAddPriority(Priority priority, View fragmentView, boolean isAdd) {
         AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
-        builder.setTitle("Category Form");
+        builder.setTitle("Priority Form");
         final EditText input = new EditText(getContext());
         input.setInputType(InputType.TYPE_CLASS_TEXT);
         input.setText(priority.getTitle());
