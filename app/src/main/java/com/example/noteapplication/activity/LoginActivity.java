@@ -1,5 +1,6 @@
 package com.example.noteapplication.activity;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -88,6 +89,15 @@ public class LoginActivity extends AppCompatActivity {
                             });
                     builder.show();
                 }
+            }
+        });
+
+        Button exit = findViewById(R.id.exitButton_id);
+        exit.setOnClickListener(new View.OnClickListener() {
+            @SuppressLint("NewApi")
+            @Override
+            public void onClick(View v) {
+                finishAndRemoveTask();
             }
         });
     }

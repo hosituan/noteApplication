@@ -2,6 +2,7 @@ package com.example.noteapplication.fragment;
 
 import android.app.Activity;
 import android.content.DialogInterface;
+import android.os.Build;
 import android.os.Bundle;
 import android.text.InputType;
 import android.util.Log;
@@ -14,6 +15,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
 
@@ -91,12 +93,10 @@ public class CategoryFragment extends Fragment {
         MyDatabaseHelper db = new MyDatabaseHelper(getContext());
         try {
             categories = db.getAllCategory();
-            categories.forEach((v) ->
-                    {
-                        mainTitle.add(v.getTitle());
-                        subTitle.add(v.getDate().toString());
-                    }
-            );
+            for (Category v : categories) {
+                mainTitle.add(v.getTitle());
+                subTitle.add(v.getDate().toString());
+            }
         } catch (ParseException e) {
             e.printStackTrace();
         }

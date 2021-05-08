@@ -71,6 +71,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
 
         NavigationView navigationView = findViewById(R.id.nav_view);
+
         // Passing each menu ID as a set of Ids because each
         // menu should be considered as top level destinations.
         mAppBarConfiguration = new AppBarConfiguration.Builder(
@@ -169,7 +170,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                     .addButton("CANCEL", -1, -1, CFAlertDialog.CFAlertActionStyle.DEFAULT, CFAlertDialog.CFAlertActionAlignment.JUSTIFIED, (dialog, which) -> {
                         dialog.dismiss();
                     });
-
             builder.show();
         }
 

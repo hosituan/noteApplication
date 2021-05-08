@@ -69,33 +69,24 @@ public class NoteFragment extends Fragment {
         List<Priority> priorities = null;
         List<Status> statuses = null;
 
-
-
-
         try {
             categories = db.getAllCategory();
-
             priorities = db.getAllPriority();
             statuses = db.getAllStatus();
 
         } catch (ParseException e) {
             e.printStackTrace();
         }
-        categories.forEach((v) ->
-                {
-                    spinnerArray_cate.add(v.getTitle());
-                }
-        );
-        priorities.forEach((v) ->
-                {
-                    spinnerArray_pri.add(v.getTitle());
-                }
-        );
-        statuses.forEach((v) ->
-                {
-                    spinnerArray_stt.add(v.getTitle());
-                }
-        );
+        for (Category v1 : categories) {
+            spinnerArray_cate.add(v1.getTitle());
+        }
+        for (Priority v1 : priorities) {
+            spinnerArray_pri.add(v1.getTitle());
+        }
+        for (Status v : statuses) {
+            spinnerArray_stt.add(v.getTitle());
+        }
+
         AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(getContext());
         LayoutInflater inflater = (LayoutInflater)getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         View dialogView = inflater.inflate(R.layout.alert_note, null);

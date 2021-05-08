@@ -49,23 +49,23 @@ public class PriorityFragment extends Fragment {
         return fragmentView;
     }
 
-    void showAddPriority(Priority category, View fragmentView, boolean isAdd) {
+    void showAddPriority(Priority priority, View fragmentView, boolean isAdd) {
         AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
         builder.setTitle("Category Form");
         final EditText input = new EditText(getContext());
         input.setInputType(InputType.TYPE_CLASS_TEXT);
-        input.setText(category.getTitle());
+        input.setText(priority.getTitle());
         builder.setView(input);
         builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 String text = input.getText().toString();
-                category.setTitle(text);
+                priority.setTitle(text);
                 if (isAdd) {
-                    db.addPriority(category);
+                    db.addPriority(priority);
                 }
                 else {
-                    db.updatePriority(category);
+                    db.updatePriority(priority);
                 }
                 LoadList(fragmentView);
                 Toast.makeText(getContext(), "Done!", Toast.LENGTH_LONG).show();

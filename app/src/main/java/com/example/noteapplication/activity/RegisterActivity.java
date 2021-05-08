@@ -48,7 +48,7 @@ public class RegisterActivity extends AppCompatActivity {
                     CFAlertDialog.Builder builder = new CFAlertDialog.Builder(RegisterActivity.this)
                             .setDialogStyle(CFAlertDialog.CFAlertStyle.ALERT)
                             .setTitle("Warning")
-                            .setMessage("Bad email!")
+                            .setMessage("Invalid Email!")
                             .addButton("OK, I understand, let me check.", -1, -1, CFAlertDialog.CFAlertActionStyle.POSITIVE, CFAlertDialog.CFAlertActionAlignment.JUSTIFIED, (dialog, which) -> {
                                 dialog.dismiss();
                             });
@@ -56,8 +56,6 @@ public class RegisterActivity extends AppCompatActivity {
                 }
                 else {
                     if (password.getText().toString().equals(rePassword.getText().toString()) && !password.getText().toString().equals("")) {
-                        String pw = password.getText().toString();
-                        String rePw = rePassword.getText().toString();
                         MyDatabaseHelper db = new MyDatabaseHelper(RegisterActivity.this);
                         User user = new User(email.getText().toString(), password.getText().toString());
                         db.addUser(user);
@@ -79,7 +77,6 @@ public class RegisterActivity extends AppCompatActivity {
                                 .addButton("OK, I understand, let me check.", -1, -1, CFAlertDialog.CFAlertActionStyle.POSITIVE, CFAlertDialog.CFAlertActionAlignment.JUSTIFIED, (dialog, which) -> {
                                     dialog.dismiss();
                                 });
-
                         builder.show();
                     }
                 }
@@ -87,6 +84,8 @@ public class RegisterActivity extends AppCompatActivity {
         });
     }
 
+
+    //email validation
     public static boolean isValidEmail(CharSequence target) {
         return (!TextUtils.isEmpty(target) && Patterns.EMAIL_ADDRESS.matcher(target).matches());
     }
